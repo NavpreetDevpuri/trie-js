@@ -1,4 +1,4 @@
-export default class Trie {
+class Trie {
   constructor(nodes = []) {
     this.root = { parent: null, upperEdge: null };
     this.count = 0;
@@ -200,3 +200,5 @@ export default class Trie {
     return result;
   }
 }
+
+module.exports = Trie;

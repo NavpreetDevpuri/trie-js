@@ -1,0 +1,20 @@
+{
+  "name": "@navpreetdevpuri/trie",
+  "version": "1.1.0",
+  "description": "Trie data structure implementation in javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NavpreetDevpuri/trie-js.git"
+  },
+  "keywords": [],
+  "author": "NavpreetDevpuri@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NavpreetDevpuri/trie-js/issues"
+  },
+  "homepage": "https://github.com/NavpreetDevpuri/trie-js#readme"
+}

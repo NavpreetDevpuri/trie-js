@@ -1,6 +1,6 @@
 {
   "name": "@navpreetdevpuri/trie-js",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Trie data structure implementation in javascript",
   "main": "lib/index.js",
   "scripts": {

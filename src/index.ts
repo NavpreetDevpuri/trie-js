@@ -232,6 +232,9 @@ class Trie {
       }
 
       this._pushAllNextSubStrings(currentNode, prefix, queue, reverse);
+      if (currentNode._isEnd) {
+        queue.push([currentNode, prefix]);
+      }
     }
 
     while (queue.length > 0) {

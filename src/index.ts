@@ -130,8 +130,8 @@ class Trie {
   }
 
   getPreorderPredecessorAndSuccessor(key: string): {
-    predecessor: TrieNode;
-    successor: TrieNode;
+    predecessor: any[];
+    successor: any[];
   } {
     const queue: [TrieNode, string][] = [];
     this._pushAllPossibleNodesForPrefix(key, queue);
@@ -142,7 +142,7 @@ class Trie {
     predecessor = predecessor ? this._getMax(predecessor) : null;
     successor = successor ? this._getMin(successor) : null;
 
-    return { predecessor, successor };
+    return { predecessor: predecessor.values, successor: successor.values };
   }
 
   createTrie(nodes: { key: string; value: any }[]) {

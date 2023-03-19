@@ -110,7 +110,7 @@ class Trie {
           );
       for (const ch of searchingCharset) {
         if (currentNode[ch]) {
-          return currentNode;
+          return currentNode[ch];
         }
       }
     }
@@ -125,7 +125,6 @@ class Trie {
       currentNode = currentNode[ch];
     }
 
-    if (!currentNode || !currentNode._isEnd) return null;
     return currentNode;
   }
 
@@ -134,6 +133,7 @@ class Trie {
     successor: any[];
   } {
     const queue: [TrieNode, string][] = [];
+
     this._pushAllPossibleNodesForPrefix(key, queue);
 
     let predecessor = this._moveToRoundSubtree([...queue], false);
@@ -182,14 +182,14 @@ class Trie {
   }
 
   find(key): any[] {
-    let currentNode = this._findNode(key);
-    if (!currentNode) return null;
-    return currentNode.values;
+    let node = this._findNode(key);
+    if (!node._isEnd) return null;
+    return node.values;
   }
 
   remove(key: string, valueChecker: Function): boolean {
     const node = this._findNode(key);
-    if (!node) return false;
+    if (!node._isEnd) return false;
     node.values.forEach((value, index) => {
       if (valueChecker(value)) {
         node.values.splice(index, 1);

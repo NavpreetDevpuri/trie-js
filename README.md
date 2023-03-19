@@ -21,7 +21,7 @@ const nodes = [];
 names.forEach((name) => {
   const [firstName, lastName] = name.split(' ');
   const node = {
-    string: `${firstName} ${lastName}`,
+    key: `${firstName} ${lastName}`,
     value: {
       firstName,
       lastName
@@ -33,7 +33,7 @@ names.forEach((name) => {
 const trie = new Trie(nodes);
 
 console.log(
-  trie.preorderTraversalSearch({
+  trie.search({
     skip: 1,
     limit: 2,
     prefix: "Eas", 

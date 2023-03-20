@@ -80,42 +80,76 @@ class Trie {
     return prefix;
   }
 
-  private _pushAllPossibleNodesForPrefix(
-    prefix: string,
-    queue: [TrieNode, string][]
-  ) {
-    if (this.caseInsensitive) {
-      prefix = prefix.toLowerCase();
-    }
-    let currentNode = this.root;
-    for (let i = 0; i < prefix.length; i++) {
-      const ch = prefix[i];
-      if (!currentNode[ch]) {
-        queue.push([currentNode, ch]);
-        break;
+  _binarySearchAscending(array, value) {
+    let start = 0;
+    let end = array.length - 1;
+
+    while (start <= end) {
+      const mid = Math.floor((start + end) / 2);
+      if (value < array[mid]) {
+        end = mid - 1;
+      } else if (array[mid] <= value) {
+        start = mid + 1;
       }
-      queue.push([currentNode, ch]);
-      currentNode = currentNode[ch];
     }
+
+    return start;
   }
 
-  _moveToRoundSubtree(queue: [TrieNode, string][], ceil = false): TrieNode {
-    let resultNode = null;
-    while (resultNode == null && queue.length > 0) {
-      const [currentNode, nextCh] = queue.pop();
-      const searchingCharset = ceil
-        ? this.charsetAscending.slice(this.charsetAscending.indexOf(nextCh) + 1)
-        : this.charsetDescending.slice(
-            this.charsetDescending.indexOf(nextCh) + 1
-          );
+  _binarySearchDescending(array, value) {
+    let start = 0;
+    let end = array.length - 1;
+
+    while (start <= end) {
+      const mid = Math.floor((start + end) / 2);
+      if (value > array[mid]) {
+        end = mid - 1;
+      } else if (array[mid] >= value) {
+        start = mid + 1;
+      }
+    }
+
+    return start;
+  }
+
+  _findPreorderPredecessorValues(queue: [TrieNode, string][]): TrieNode {
+    let predecessorValues = null;
+    let i = queue.length;
+    while (predecessorValues == null && --i >= 0) {
+      const [currentNode, nextCh] = queue[i];
+      const searchingCharset = this.charsetDescending.slice(
+        this._binarySearchDescending(this.charsetDescending, nextCh)
+      );
       for (const ch of searchingCharset) {
         if (currentNode[ch]) {
-          return currentNode[ch];
+          predecessorValues = this._getMax(currentNode[ch]).values;
+          break;
+        }
+      }
+      if (predecessorValues == null && currentNode._isEnd) {
+        predecessorValues = currentNode.values;
+        break;
+      }
+    }
+
+    return predecessorValues;
+  }
+  _findPreorderSuccessorValues(queue: [TrieNode, string][]): TrieNode {
+    let successorValues = null;
+    let i = queue.length;
+    while (successorValues == null && --i >= 0) {
+      const [currentNode, nextCh] = queue[i];
+      const searchingCharset = this.charsetAscending.slice(
+        this._binarySearchAscending(this.charsetAscending, nextCh)
+      );
+      for (const ch of searchingCharset) {
+        if (currentNode[ch]) {
+          successorValues = this._getMin(currentNode[ch]).values;
         }
       }
     }
 
-    return null;
+    return successorValues;
   }
 
   _findNode(key: string): TrieNode {
@@ -128,21 +162,66 @@ class Trie {
     return currentNode;
   }
 
-  getPreorderPredecessorAndSuccessor(key: string): {
-    predecessor: any[];
-    successor: any[];
-  } {
+  private _getAllPossibleNodesForPrefix(prefix: string) {
     const queue: [TrieNode, string][] = [];
+    if (this.caseInsensitive) {
+      prefix = prefix.toLowerCase();
+    }
+    let currentNode = this.root;
+    let currI = 0;
+    for (; currI < prefix.length; currI++) {
+      const ch = prefix[currI];
+      if (!currentNode[ch]) {
+        queue.push([currentNode, ch]);
+        break;
+      }
+      queue.push([currentNode, ch]);
+      currentNode = currentNode[ch];
+    }
 
-    this._pushAllPossibleNodesForPrefix(key, queue);
+    return { currI, currentNode, queue };
+  }
 
-    let predecessor = this._moveToRoundSubtree([...queue], false);
-    let successor = this._moveToRoundSubtree([...queue], true);
+  getPreorderPredecessorAndSuccessorForNewkey(key: string): {
+    predecessorValues: any[];
+    successorValues: any[];
+  } {
+    if (this.caseInsensitive) {
+      key = key.toLowerCase();
+    }
+    const { currI, currentNode, queue } =
+      this._getAllPossibleNodesForPrefix(key);
 
-    predecessor = predecessor ? this._getMax(predecessor) : null;
-    successor = successor ? this._getMin(successor) : null;
+    let predecessorValues = null;
+    let successorValues = null;
+    predecessorValues = this._findPreorderPredecessorValues(queue);
+    if (currI === key.length) {
+      successorValues = this._getMin(currentNode).values;
+    }
+    if (currI < key.length) {
+      successorValues = this._findPreorderSuccessorValues(queue);
+    }
+    return { predecessorValues, successorValues };
+  }
 
-    return { predecessor: predecessor.values, successor: successor.values };
+  getPreorderPredecessorAndSuccessorForExistingKey(key: string): {
+    predecessorValues: any[];
+    successorValues: any[];
+  } {
+    if (this.caseInsensitive) {
+      key = key.toLowerCase();
+    }
+    const { currI, currentNode, queue } =
+      this._getAllPossibleNodesForPrefix(key);
+
+    let predecessorValues = null;
+    let successorValues = null;
+
+    predecessorValues = this._findPreorderPredecessorValues(queue);
+    const queueCopy = [...queue];
+    successorValues = this._findPreorderSuccessorValues(queueCopy);
+
+    return { predecessorValues, successorValues };
   }
 
   createTrie(nodes: { key: string; value: any }[]) {

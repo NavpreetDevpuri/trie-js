@@ -1,6 +1,6 @@
 {
   "name": "@navpreetdevpuri/trie-js",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Trie data structure implementation in javascript",
   "main": "lib/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/NavpreetDevpuri/trie-js.git"
   },
-  "keywords": [],
+  "keywords": ["trie", "data structures", "trie data structure"],
   "author": "NavpreetDevpuri@gmail.com",
   "license": "ISC",
   "bugs": {

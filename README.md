@@ -5,7 +5,7 @@ Trie data structure implementation in javascript
 # Example
 
 ```javascript
-const Trie = require('@navpreetdevpuri/trie');
+const Trie = require('@navpreetdevpuri/trie-js');
 
 const names = [
   'Easton Bass',
